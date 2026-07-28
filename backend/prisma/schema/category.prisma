@@ -1,0 +1,20 @@
+model Category {
+  id          String      @id @default(uuid())
+  name        String      @unique @db.VarChar(255)
+  description String?
+
+  // Relations
+  gearItems   GearItem[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("categories")
+}
+
+
+
+// POST /api/categories (Admin)
+// GET /api/categories (Public)
+// PATCH /api/categories/:id (Admin)
+// DELETE /api/categories/:id (Admin)
