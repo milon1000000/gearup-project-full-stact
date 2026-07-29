@@ -24,7 +24,7 @@ const navItems = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Contact", href: "/contact" },
-  { label: "News", href: "/news" },
+  { label: "Category", href: "/category" },
   { label: "Premium", href: "/premium" },
 ];
 
@@ -108,7 +108,6 @@ export function Navbar({ user }: NavbarProps) {
               </Button>
             </SheetTrigger>
 
-            {/* px-8 দিয়ে এবং আরও ডানে সরানোর জন্য বাম পাশে প্যাডিং বাড়ানো হয়েছে */}
             <SheetContent side="left" className="px-8 pt-12">
               <div className="flex flex-col gap-6">
                 {navItems.map((item) => (

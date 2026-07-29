@@ -1,14 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Home,
-  LayoutDashboard,
-  User,
-  Package,
-  ShoppingCart,
-  Settings,
-} from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import {
   Sidebar,
@@ -20,47 +13,25 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
-import { usePathname } from "next/navigation";
-import { useSidebar } from "@/components/ui/sidebar";
+import { ISidebarItem, NavbarProps } from "@/lib/type";
+import { sidebarMenuItems } from "../_config/sidebarmenuItems";
 
-const navItems = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Home",
-    href: "/",
-    icon: Home,
-  },
-  {
-    title: "Profile",
-    href: "/profile",
-    icon: User,
-  },
-  {
-    title: "Products",
-    href: "/products",
-    icon: Package,
-  },
-  {
-    title: "Orders",
-    href: "/orders",
-    icon: ShoppingCart,
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
-];
-
-export function DashboardSidebar() {
+export function DashboardSidebar({ user }: NavbarProps) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
+
+  let navItems: ISidebarItem[] = [];
+
+  if (user.data.role === "CUSTOMER") {
+    navItems = sidebarMenuItems.CUSTOMER;
+  } else if (user.data.role === "PROVIDER") {
+    navItems = sidebarMenuItems.PROVIDER;
+  } else if (user.data.role === "ADMIN") {
+    navItems = sidebarMenuItems.ADMIN;
+  }
 
   return (
     <Sidebar collapsible="offcanvas">
@@ -74,8 +45,8 @@ export function DashboardSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="mt-3 space-y-2">
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
+              {navItems.map((item, index) => (
+                <SidebarMenuItem key={`${item.href}-${item.label}-${index}`}>
                   <SidebarMenuButton
                     asChild
                     isActive={pathname === item.href}
@@ -86,7 +57,7 @@ export function DashboardSidebar() {
                       onClick={() => setOpenMobile(false)}
                     >
                       <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
+                      <span>{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

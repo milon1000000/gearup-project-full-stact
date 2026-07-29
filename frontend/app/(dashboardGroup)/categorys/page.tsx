@@ -1,10 +1,10 @@
-import CategoryFormDialog from "../_components/CategoryFormDialog";
+import { Suspense } from "react";
 import CategoryList from "../_components/CategoryList";
+import { CategorySkeleton } from "../_components/CategorySkeleton";
 
 const AdminDashboardPage = () => {
   return (
     <div className="space-y-8 p-6">
-      {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -14,12 +14,11 @@ const AdminDashboardPage = () => {
             Create, update, and manage equipment categories.
           </p>
         </div>
-
-        <CategoryFormDialog mode="create" />
       </div>
 
-      {/* Category List */}
-      <CategoryList />
+      <Suspense fallback={<CategorySkeleton />}>
+        <CategoryList />
+      </Suspense>
     </div>
   );
 };

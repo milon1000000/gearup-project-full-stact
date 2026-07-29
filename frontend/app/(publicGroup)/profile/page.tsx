@@ -1,6 +1,7 @@
 import { getMe } from "@/service/getMe";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -146,7 +147,7 @@ const ProfilePage = async () => {
                     </p>
 
                     <p>
-                      {new Date(profile.createdAt).toLocaleDateString()}
+                      {formatDate(profile.createdAt)}
                     </p>
                   </div>
                 </div>

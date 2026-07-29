@@ -3,16 +3,9 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { LoginState, RegisterState } from "@/lib/type";
 
-type LoginState = {
-  success: boolean;
-  statusCode: number;
-  message: string;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-  };
-};
+
 
 export const loginAction = async (
   redirectTo:string,
@@ -72,28 +65,7 @@ export const loginAction = async (
 
 // register api
 
-type RegisterState = {
-  success: boolean;
-  statusCode: number;
-  message: string;
-  data: {
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      activeStatus: string;
-      role: string;
-      createdAt: string;
-      updatedAt: string;
-      profile: {
-        id: string;
-        profilePhoto: string;
-        bio: string | null;
-        userId: string;
-      };
-    };
-  };
-};
+
 
 export const registerAction = async (
   prevState: RegisterState,
@@ -102,13 +74,13 @@ export const registerAction = async (
   const name = formData.get("name");
   const email = formData.get("email");
   const password = formData.get("password");
-  // const profilePhoto=formData.get("profilePhoto");
+  const isProvider = formData.get("isProvider");
 
   const payload = {
     name,
     email,
     password,
-    // profilePhoto
+    role: isProvider ? "PROVIDER" : "CUSTOMER",
   };
 
   const res = await fetch(`${process.env.BACKEND_API_URL}/api/auth/register`, {
@@ -118,7 +90,6 @@ export const registerAction = async (
     },
     body: JSON.stringify(payload),
   });
-  const result = await res.json();
-  console.log(result);
-  return result;
+
+  return await res.json();
 };
