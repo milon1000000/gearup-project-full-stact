@@ -38,8 +38,10 @@ export function Navbar({ user }: NavbarProps) {
   };
 
   const isLoggedIn = user?.success;
-
   const role = user?.data?.role;
+  const displayName = user?.data?.name ?? "User";
+  const displayEmail = user?.data?.email ?? "";
+  const profileImage = user?.data?.profileImage;
 
   let dashboardHref = "/";
 
@@ -129,15 +131,13 @@ export function Navbar({ user }: NavbarProps) {
               <DropdownMenuTrigger asChild>
                 <Avatar className="h-9 w-9 cursor-pointer">
                   <AvatarImage
-                    src={
-                      user.data?.profileImage || "https://github.com/shadcn.png"
-                    }
-                    alt={user.data?.name}
+                    src={profileImage || "https://github.com/shadcn.png"}
+                    alt={displayName}
                   />
 
                   <AvatarFallback>
-                    {user.data?.name
-                      ?.split(" ")
+                    {displayName
+                      .split(" ")
                       .map((n) => n[0])
                       .join("")
                       .toUpperCase()}
@@ -147,10 +147,10 @@ export function Navbar({ user }: NavbarProps) {
 
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
-                  <p className="font-semibold">{user.data.name}</p>
+                  <p className="font-semibold">{displayName}</p>
 
                   <p className="text-xs text-muted-foreground">
-                    {user.data.email}
+                    {displayEmail}
                   </p>
                 </DropdownMenuLabel>
 

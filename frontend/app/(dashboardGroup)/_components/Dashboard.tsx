@@ -23,13 +23,14 @@ export function DashboardSidebar({ user }: NavbarProps) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
+  const userRole = user?.data?.role;
   let navItems: ISidebarItem[] = [];
 
-  if (user.data.role === "CUSTOMER") {
+  if (userRole === "CUSTOMER") {
     navItems = sidebarMenuItems.CUSTOMER;
-  } else if (user.data.role === "PROVIDER") {
+  } else if (userRole === "PROVIDER") {
     navItems = sidebarMenuItems.PROVIDER;
-  } else if (user.data.role === "ADMIN") {
+  } else if (userRole === "ADMIN") {
     navItems = sidebarMenuItems.ADMIN;
   }
 
