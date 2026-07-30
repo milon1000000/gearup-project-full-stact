@@ -4,9 +4,9 @@ import { auth } from "../../middlewares/auth";
 import { Role } from "../../../generated/prisma/enums";
 const router=Router();
 
-router.put(
+router.patch(
   "/",
-  auth(Role.CUSTOMER,Role.CUSTOMER,Role.ADMIN),
+  auth(Role.CUSTOMER,Role.CUSTOMER,Role.ADMIN,Role.PROVIDER),
   userController.updateMyProfile
 );
 

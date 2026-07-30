@@ -14,13 +14,13 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
           <SidebarTrigger className="md:hidden" />
 
           <div className="flex-1">
-            <Navbar user={user}/>
+            <Navbar user={user} />
           </div>
         </header>
 
         <div className="flex flex-1 w-full overflow-hidden">
-          <div className="flex-shrink: 0">
-            <DashboardSidebar user={user}/>
+          <div className="shrink-0">
+            {user?.success && <DashboardSidebar user={user} />}
           </div>
 
           <main className="flex-1 flex flex-col p-6 overflow-y-auto w-full">

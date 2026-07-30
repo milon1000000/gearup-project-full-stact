@@ -1,5 +1,5 @@
 import CategoryCard from "./CategoryCard";
-import { getAllCaregory } from "../_actions/myCategoryActions";
+import { getAllCaregory } from "../../(dashboardGroup)/_actions/myCategoryActions";
 import { getMe } from "@/service/getMe";
 
 const CategoryList = async () => {

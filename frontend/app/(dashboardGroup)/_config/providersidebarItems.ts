@@ -1,5 +1,5 @@
 import { ISidebarItem } from "@/lib/type";
-import { FileText, LayoutDashboard } from "lucide-react";
+import { ClipboardList, FileText, LayoutDashboard } from "lucide-react";
 
 export const PROVIDER_SIDEBAR_ITEMS:ISidebarItem[]=[
     {
@@ -8,8 +8,13 @@ export const PROVIDER_SIDEBAR_ITEMS:ISidebarItem[]=[
         icon:LayoutDashboard
     },
     {
-        label:"Category",
-        href:"/provider-dashboard",
+        label:"My-Gear",
+        href:"/my-gear",
         icon:FileText
+    },
+     {
+        label:"Rental Orders",
+        href:"/provider-dashboard/rental-orders",
+        icon:ClipboardList
     }
 ]

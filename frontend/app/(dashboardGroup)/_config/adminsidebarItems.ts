@@ -1,5 +1,5 @@
 import { ISidebarItem } from "@/lib/type";
-import { FileText, LayoutDashboard } from "lucide-react";
+import { FileText, LayoutDashboard, ListOrdered } from "lucide-react";
 
 export const ADMIN_SIDEBAR_ITEMS:ISidebarItem[]=[
     {
@@ -9,7 +9,12 @@ export const ADMIN_SIDEBAR_ITEMS:ISidebarItem[]=[
     },
     {
         label:"My category",
-        href:"/category",
+        href:"/admin-dashboard/category",
         icon:FileText
+    },
+     {
+        label:"All Rentals",
+        href:"/admin-dashboard/all-rentals",
+        icon:ListOrdered
     }
 ]

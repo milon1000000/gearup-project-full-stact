@@ -80,3 +80,134 @@ export type ISidebarItem = {
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
 };
+
+
+export type ICreateGearResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    id: string;
+    name: string;
+    description: string;
+    image: string;
+    brand: string;
+    condition: string;
+    pricePerDay: number;
+    stock: number;
+    available: boolean;
+    providerId: string;
+    categoryId: string;
+    createdAt: string;
+    updatedAt: string;
+    category: {
+      id: string;
+      name: string;
+      description: string;
+      createdAt: string;
+      updatedAt: string;
+    };
+    provider: {
+      id: string;
+      name: string;
+      email: string;
+    };
+  };
+};
+
+export type IGearItem = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  brand: string;
+  condition: string;
+  pricePerDay: number;
+  stock: number;
+  available: boolean;
+  providerId: string;
+  categoryId: string;
+  createdAt: string;
+  updatedAt: string;
+  category: {
+    id: string;
+    name: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  provider: {
+    id: string;
+    name: string;
+    email: string;
+  };
+};
+
+export type IMyGearResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: IGearItem[];
+};
+
+export type GearFormDialogProps = {
+  categoryId: string;
+};
+
+
+
+export type ICreateRentalPayload = {
+  gearItemId: string;
+  quantity: number;
+  startDate: string;
+  endDate: string;
+};
+
+
+
+export type IGetRentalResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    id: string;
+    quantity: number;
+    startDate: string;
+    endDate: string;
+    totalPrice: number;
+    status:
+      | "PENDING"
+      | "CONFIRMED"
+      | "PAID"
+      | "PICKED_UP"
+      | "RETURNED"
+      | "CANCELLED";
+    customerId: string;
+    gearItemId: string;
+    createdAt: string;
+    updatedAt: string;
+
+    customer: {
+      id: string;
+      name: string;
+      email: string;
+      role?: "CUSTOMER" | "PROVIDER" | "ADMIN";
+      status?: "ACTIVE" | "SUSPENDED";
+    };
+
+    gearItem: {
+      id: string;
+      name: string;
+      description: string;
+      image: string;
+      brand: string;
+      condition: string;
+      pricePerDay: number;
+      available: boolean;
+      providerId: string;
+      categoryId: string;
+      createdAt: string;
+      updatedAt: string;
+    };
+  };
+};

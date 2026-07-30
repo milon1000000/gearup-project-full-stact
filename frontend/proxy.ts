@@ -7,7 +7,7 @@ import { getNewAccessToken } from "./service/refreshToken";
 // import { getSubscriptionStatus } from "./app/(publicGroup)/_actions/getSubscriptionStatus";
 
 const AUTH_ROUTES = ["/login", "/register"];
-const PUBLIC_ROUTES = ["/", "/category", "/login", "/register"];
+const PUBLIC_ROUTES = ["/","/gear", "/category", "/login", "/register"];
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

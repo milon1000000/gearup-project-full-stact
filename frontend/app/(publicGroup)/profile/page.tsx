@@ -4,8 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin, ShieldCheck, Calendar } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  ShieldCheck,
+  Calendar,
+} from "lucide-react";
+import ProfileFormDialog from "../_components/ProfileFormDialog";
 
 const ProfilePage = async () => {
   const user = await getMe();
@@ -22,6 +28,7 @@ const ProfilePage = async () => {
           {/* Avatar */}
           <Avatar className="-mt-16 h-32 w-32 border-4 border-background">
             <AvatarImage src={profile.profileImage ?? ""} />
+
             <AvatarFallback className="text-3xl">
               {profile.name
                 .split(" ")
@@ -31,7 +38,7 @@ const ProfilePage = async () => {
             </AvatarFallback>
           </Avatar>
 
-          <div className="mt-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-3xl font-bold">{profile.name}</h1>
 
@@ -54,12 +61,13 @@ const ProfilePage = async () => {
               </div>
             </div>
 
-            <Button>Edit Profile</Button>
+            <ProfileFormDialog profile={profile} />
           </div>
 
           <Separator className="my-8" />
 
           <div className="grid gap-6 md:grid-cols-2">
+            {/* Personal Information */}
             <Card>
               <CardHeader>
                 <h2 className="text-lg font-semibold">
@@ -106,6 +114,7 @@ const ProfilePage = async () => {
               </CardContent>
             </Card>
 
+            {/* Account Information */}
             <Card>
               <CardHeader>
                 <h2 className="text-lg font-semibold">
@@ -146,9 +155,7 @@ const ProfilePage = async () => {
                       Joined
                     </p>
 
-                    <p>
-                      {formatDate(profile.createdAt)}
-                    </p>
+                    <p>{formatDate(profile.createdAt)}</p>
                   </div>
                 </div>
               </CardContent>

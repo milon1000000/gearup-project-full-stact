@@ -37,17 +37,14 @@ export const isAccessTokenExists = async () => {
   const refreshToken = cookieStore.get("refreshToken")?.value;
 
   if (!accessToken && !refreshToken) {
-    return {
-      success: false,
-      message: "User not logged in!",
-    };
+    return "";
   }
 
   const decodedAccessToken = accessToken
     ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string)
     : null;
 
-  let decodedRefreshToken = refreshToken
+  const decodedRefreshToken = refreshToken
     ? jwtUtils.verifyToken(
         refreshToken,
         process.env.JWT_REFRESH_SECRET as string,
@@ -66,7 +63,10 @@ export const isAccessTokenExists = async () => {
         sameSite: "lax",
       });
       accessToken = newAccessToken;
+    } else {
+      return "";
     }
   }
-  return accessToken;
+
+  return accessToken || "";
 };

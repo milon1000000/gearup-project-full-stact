@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PencilIcon, PlusIcon } from "lucide-react";
 import { toast } from "sonner";
-import { createCategory } from "../_actions/myCategoryActions";
+import { createCategory, updateCategory } from "../_actions/myCategoryActions";
 
 type Category = {
   id: string;
@@ -34,8 +34,10 @@ export default function CategoryFormDialog({
 }: CategoryFormDialogProps) {
   const [open, setOpen] = useState(false);
 
+  const actionFn = mode === "edit" ? updateCategory : createCategory;
+
   const [state, action, pending] = useActionState(
-    createCategory,
+    actionFn,
     null
   );
 
@@ -43,12 +45,12 @@ export default function CategoryFormDialog({
     if (!state) return;
 
     if (state.success) {
-      toast.success(state.message || "Category created successfully");
+      toast.success(state.message || (mode === "edit" ? "Category updated successfully" : "Category created successfully"));
       setOpen(false);
     } else {
-      toast.error(state.message || "Failed to create category");
+      toast.error(state.message || (mode === "edit" ? "Failed to update category" : "Failed to create category"));
     }
-  }, [state]);
+  }, [state, mode]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -75,6 +77,10 @@ export default function CategoryFormDialog({
         </DialogHeader>
 
         <form action={action} className="space-y-4">
+          {mode === "edit" && (
+            <input type="hidden" name="id" value={category?.id} />
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="name">Category Name</Label>
             {/* w-full ক্লাসটি যোগ করা হয়েছে */}
@@ -112,7 +118,11 @@ export default function CategoryFormDialog({
             </Button>
 
             <Button type="submit" disabled={pending}>
-              {pending ? "Creating..." : "Create Category"}
+              {pending
+                ? mode === "edit" ? "Updating..." : "Creating..."
+                : mode === "edit"
+                  ? "Update Category"
+                  : "Create Category"}
             </Button>
           </DialogFooter>
         </form>

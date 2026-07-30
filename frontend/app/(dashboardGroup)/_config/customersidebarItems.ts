@@ -8,8 +8,8 @@ export const CUSTOMER_SIDEBAR_ITEMS:ISidebarItem[]=[
         icon:LayoutDashboard
     },
     {
-        label:"Category",
-        href:"/dashboard",
+        label:"My-Rentals",
+        href:"/dashboard/my-rentals",
         icon:FileText
     }
 ]

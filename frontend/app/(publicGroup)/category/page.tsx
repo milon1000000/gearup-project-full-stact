@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { CategorySkeleton } from "../_components/CategorySkeleton";
 import CategoryList from "../_components/CategoryList";
 
 const CategoryPage = () => {
@@ -12,7 +14,9 @@ const CategoryPage = () => {
         </div>
       </div>
 
-      <CategoryList />
+      <Suspense fallback={<CategorySkeleton />}>
+        <CategoryList />
+      </Suspense>
     </div>
   );
 };
