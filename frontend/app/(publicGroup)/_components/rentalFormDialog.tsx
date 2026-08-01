@@ -25,14 +25,13 @@ const RentalFormDialog = ({ isOpen, onClose, gearItemId }: RentalFormDialogProps
   const router = useRouter();
   const [state, formAction, pending] = useActionState(createRental, null);
   
-  // একটি রেফারেন্স ব্যবহার করা হলো যাতে টোস্ট এবং রিডাইরেক্ট শুধু একবারই রান হয়
   const isHandledRef = useRef(false);
 
   useEffect(() => {
     if (!state || isHandledRef.current) return;
 
     if (state.success) {
-      isHandledRef.current = true; // ফ্ল্যাগ ট্রু করে দেওয়া হলো
+      isHandledRef.current = true;
       toast.success(state.message || "Rental created successfully!");
       onClose();
       
@@ -43,7 +42,6 @@ const RentalFormDialog = ({ isOpen, onClose, gearItemId }: RentalFormDialogProps
     }
   }, [state, onClose, router]);
 
-  // ডায়ালগ বন্ধ হলে বা নতুন করে ওপেন হলে রেফারেন্স রিসেট করার জন্য
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       isHandledRef.current = false;

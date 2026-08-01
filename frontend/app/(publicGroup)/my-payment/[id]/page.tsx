@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { getSiglePayment } from '../../_actions/getMyPaymentActions';
 
 interface SinglePaymentPageProps {
-  params: Promise<{ id: string }>; // Next.js 15+ এর জন্য Promise হতে পারে
+  params: Promise<{ id: string }>;
 }
 
 const statusConfig: Record<string, { label: string; bg: string; icon: any; text: string }> = {
@@ -47,11 +47,10 @@ export default async function SinglePaymentPage({ params }: SinglePaymentPagePro
   
   // API Call
   const response = await getSiglePayment(id);
-  console.log("API Response:", response); // টার্মিনালে চেক করার জন্য
+  console.log("API Response:", response);
 
   const payment = response?.data;
 
-  // যদি পেমেন্ট ডাটা না পাওয়া যায়
   if (!payment) {
     return (
       <main className="min-h-screen bg-slate-50/50 flex items-center justify-center py-20 px-4 text-center">

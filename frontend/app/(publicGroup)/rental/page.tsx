@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import GearDetailsClient from "../_components/GearDetailsClient";
 import { getMe } from "@/service/getMe";
 import { getSingleGear } from "../_actions/getAllGear";
+import { getReviewsByGearId } from "../_actions/getAllReviews";
 
 type PageProps = {
   searchParams: Promise<{ id?: string | string[] | undefined }>;
@@ -18,9 +19,10 @@ const RentalPage = async ({ searchParams }: PageProps) => {
     notFound();
   }
 
-  const [userResult, gearResult] = await Promise.all([
+  const [userResult, gearResult, reviewResult] = await Promise.all([
     getMe(),
     getSingleGear(gearId),
+    getReviewsByGearId(gearId),
   ]);
 
   if (!gearResult.success || !gearResult.data) {
@@ -30,7 +32,11 @@ const RentalPage = async ({ searchParams }: PageProps) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div>
-        <GearDetailsClient gear={gearResult.data} userRole={userResult?.data?.role} />
+        <GearDetailsClient
+          gear={gearResult.data}
+          userRole={userResult?.data?.role}
+          reviews={reviewResult?.data?.reviews ?? []}
+        />
       </div>
     </Suspense>
   );

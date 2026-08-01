@@ -60,11 +60,9 @@ export default function CategoryCard({
 
   return (
     <Card className="group relative overflow-hidden rounded-3xl border border-slate-100/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:border-emerald-100">
-      {/* টপ মডার্ন গ্রেডিয়েন্ট স্ট্রিপ */}
       <div className="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-90 group-hover:opacity-100 transition-opacity" />
 
       <CardContent className="p-6 space-y-6">
-        {/* টপ সেকশন: আইকন এবং একশন বাটনস */}
         <div className="flex items-start justify-between">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50/80 text-emerald-600 border border-emerald-100/60 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-emerald-600/20 transition-all duration-300">
             <FolderKanban className="h-6 w-6" />
@@ -139,7 +137,6 @@ export default function CategoryCard({
           </div>
         </div>
 
-        {/* মিডল সেকশন: টাইটেল ও ডেসক্রিপশন */}
         <div className="space-y-2.5">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-slate-900 tracking-tight group-hover:text-emerald-700 transition-colors">
@@ -158,7 +155,6 @@ export default function CategoryCard({
           </p>
         </div>
 
-        {/* ফুটার সেকশন: ডেট এবং স্ট্যাটাস */}
         <div className="flex items-center justify-between border-t border-slate-100/80 pt-4">
           <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
             <Calendar className="h-3.5 w-3.5 text-slate-400" />

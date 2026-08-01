@@ -32,6 +32,7 @@ export const createReviews = async (prevState: any, formData: FormData) => {
     }
 
     revalidateTag("all-reviews",{expire:0});
+    revalidateTag("my-reviews",{expire:0});
 
     return {
       success: true,
