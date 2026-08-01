@@ -6,7 +6,6 @@ import { Role } from "../../../generated/prisma/enums";
 
 const getAllUsers = catchAsync(async (req, res) => {
   const isAdmin = req.user?.role === Role.ADMIN;
-  console.log(isAdmin);
   const result = await adminService.getAllUsers();
 
   sendResponse(res, {

@@ -117,6 +117,123 @@ if (!categoryId) {
   return result;
 };
 
+// const getAllGearItems = async (query: IGearQuery) => {
+//   const limit = query.limit ? Number(query.limit) : 10;
+//   const page = query.page ? Number(query.page) : 1;
+//   const skip = (page - 1) * limit;
+
+//   const sortBy = query.sortBy || "createdAt";
+//   const sortOrder = query.sortOrder || "desc";
+
+//   const andConditions: GearItemWhereInput[] = [];
+
+//   // Search
+//   if (query.searchTerm) {
+//     andConditions.push({
+//       OR: [
+//         {
+//           name: {
+//             contains: query.searchTerm,
+//             mode: "insensitive",
+//           },
+//         },
+//         {
+//           description: {
+//             contains: query.searchTerm,
+//             mode: "insensitive",
+//           },
+//         },
+
+//         {
+//           brand: {
+//             contains: query.searchTerm,
+//             mode: "insensitive",
+//           },
+//         },
+//       ],
+//     });
+//   }
+
+//   // Category Filter
+//   if (query.categoryId) {
+//     andConditions.push({
+//       categoryId: query.categoryId,
+//     });
+//   }
+
+//   // Brand Filter
+//   if (query.brand) {
+//     andConditions.push({
+//       brand: {
+//         equals: query.brand,
+//         mode: "insensitive",
+//       },
+//     });
+//   }
+
+//   // Availability Filter
+//   if (query.available !== undefined) {
+//     andConditions.push({
+//       available: query.available === "true",
+//     });
+//   }
+
+//   // Min Price
+//   if (query.minPrice) {
+//     andConditions.push({
+//       pricePerDay: {
+//         gte: Number(query.minPrice),
+//       },
+//     });
+//   }
+
+//   // Max Price
+//   if (query.maxPrice) {
+//     andConditions.push({
+//       pricePerDay: {
+//         lte: Number(query.maxPrice),
+//       },
+//     });
+//   }
+
+//   const gearItems = await prisma.gearItem.findMany({
+//     where: {
+//       AND: andConditions,
+//     },
+//     include: {
+//       category: true,
+//       provider: {
+//         select: {
+//           id: true,
+//           name: true,
+//           email: true,
+//         },
+//       },
+//     },
+//     skip,
+//     take: limit,
+//     orderBy: {
+//       [sortBy]: sortOrder,
+//     },
+//   });
+
+//   const total = await prisma.gearItem.count({
+//     where: {
+//       AND: andConditions,
+//     },
+//   });
+
+//   return {
+//     data: gearItems,
+//     meta: {
+//       page,
+//       limit,
+//       total,
+//       totalPages: Math.ceil(total / limit),
+//     },
+//   };
+// };
+
 const getAllGearItems = async (query: IGearQuery) => {
   const limit = query.limit ? Number(query.limit) : 10;
   const page = query.page ? Number(query.page) : 1;
@@ -129,6 +246,9 @@ const getAllGearItems = async (query: IGearQuery) => {
 
   // Search
   if (query.searchTerm) {
+    const searchNumber = Number(query.searchTerm);
+    const isNumeric = !isNaN(searchNumber);
+
     andConditions.push({
       OR: [
         {
@@ -143,13 +263,22 @@ const getAllGearItems = async (query: IGearQuery) => {
             mode: "insensitive",
           },
         },
-
         {
           brand: {
             contains: query.searchTerm,
             mode: "insensitive",
           },
         },
+        // প্রাইস দিয়ে সার্চ করার জন্য সংখ্যা হলে pricePerDay চেক করবে
+        ...(isNumeric
+          ? [
+              {
+                pricePerDay: {
+                  equals: searchNumber,
+                },
+              },
+            ]
+          : []),
       ],
     });
   }

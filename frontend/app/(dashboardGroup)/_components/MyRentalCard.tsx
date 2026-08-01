@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Package, CircleDollarSign, Ban } from "lucide-react";
+import { Calendar, Package, CircleDollarSign, Ban, CreditCard } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cancleMyRental } from "../_actions/getRentals";
+import { createPayment } from "../_actions/mypaymentActions";
 
 interface MyRentalCardProps {
   rental: {
@@ -38,21 +39,42 @@ interface MyRentalCardProps {
 }
 
 const MyRentalCard = ({ rental }: MyRentalCardProps) => {
+  // 1. Cancel Rental Action Hook
   const cancelRentalAction = cancleMyRental.bind(null, rental.id);
-  const [state, formAction, isPending] = useActionState(
+  const [cancelState, cancelFormAction, isCancelPending] = useActionState(
     cancelRentalAction,
     null,
   );
 
+  // 2. Payment Action Hook bound with rental.id as rentalOrderId
+  const paymentAction = createPayment.bind(null, rental.id);
+  const [paymentState, paymentFormAction, isPaymentPending] = useActionState(
+    paymentAction,
+    null,
+  );
+
   useEffect(() => {
-    if (state) {
-      if (state.success) {
-        toast.success(state.message || "Rental cancelled successfully!");
+    if (cancelState) {
+      if (cancelState.success) {
+        toast.success(cancelState.message || "Rental cancelled successfully!");
       } else {
-        toast.error(state.message || "Failed to cancel rental.");
+        toast.error(cancelState.message || "Failed to cancel rental.");
       }
     }
-  }, [state]);
+  }, [cancelState]);
+
+  useEffect(() => {
+    if (paymentState) {
+      if (paymentState.success) {
+        const paymentUrl = paymentState.data?.paymentUrl || paymentState.paymentUrl;
+        if (paymentUrl) {
+          window.location.href = paymentUrl;
+        }
+      } else {
+        toast.error(paymentState.message || "Failed to initiate payment.");
+      }
+    }
+  }, [paymentState]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -79,10 +101,8 @@ const MyRentalCard = ({ rental }: MyRentalCardProps) => {
     }
   };
 
-  const isCancellable =
-    rental.status === "PENDING" ||
-    rental.status === "CONFIRMED" ||
-    rental.status === "PAID";
+  const isCancellable = rental.status === "PENDING";
+  const isPayable = rental.status === "CONFIRMED";
 
   return (
     <Card className="overflow-hidden border border-slate-100 shadow-md hover:shadow-lg transition-all rounded-2xl bg-white">
@@ -131,7 +151,7 @@ const MyRentalCard = ({ rental }: MyRentalCardProps) => {
               </div>
             </div>
 
-            {/* Price & Cancel Action Section */}
+            {/* Price & Dynamic Action Buttons Section */}
             <div className="flex flex-col sm:flex-row justify-between items-center pt-3 border-t border-slate-100 gap-3">
               <div className="flex items-center gap-2">
                 <span className="text-xs text-slate-500 font-medium">
@@ -143,52 +163,70 @@ const MyRentalCard = ({ rental }: MyRentalCardProps) => {
                 </div>
               </div>
 
-              {/* Cancel Rental Button & Dialog */}
-              {isCancellable && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
+              {/* Action Buttons based on Status */}
+              <div className="flex items-center gap-2">
+                {/* Cancel Button (Only if PENDING) */}
+                {isCancellable && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-xl border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 text-xs font-semibold h-8 px-3 gap-1.5"
+                      >
+                        <Ban className="h-3.5 w-3.5" />
+                        Cancel Rental
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent className="rounded-3xl border-slate-100 p-6 shadow-2xl">
+                      <form action={cancelFormAction}>
+                        <AlertDialogHeader className="space-y-2">
+                          <AlertDialogTitle className="text-xl font-bold text-slate-900">
+                            Cancel Rental Request?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="text-sm text-slate-500 leading-relaxed">
+                            Are you sure you want to cancel your rental for{" "}
+                            <span className="font-semibold text-slate-800">
+                              &quot;{rental.gearItem.name}&quot;
+                            </span>
+                            ? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter className="mt-6 gap-2 sm:gap-0">
+                          <AlertDialogCancel className="rounded-2xl border-slate-200 text-slate-600 hover:bg-slate-50">
+                            Keep Rental
+                          </AlertDialogCancel>
+
+                          <AlertDialogAction
+                            type="submit"
+                            disabled={isCancelPending}
+                            className="rounded-2xl bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-600/20"
+                          >
+                            {isCancelPending ? "Cancelling..." : "Yes, Cancel Rental"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </form>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+
+                {/* Payment Now Button (Only if CONFIRMED) */}
+                {isPayable && (
+                  <form action={paymentFormAction}>
                     <Button
-                      variant="outline"
+                      type="submit"
                       size="sm"
-                      className="rounded-xl border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 text-xs font-semibold h-8 px-3 gap-1.5"
+                      disabled={isPaymentPending}
+                      className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-8 px-4 gap-1.5 shadow-lg shadow-emerald-600/20"
                     >
-                      <Ban className="h-3.5 w-3.5" />
-                      Cancel Rental
+                      <CreditCard className="h-3.5 w-3.5" />
+                      {isPaymentPending ? "Processing..." : "Pay Now"}
                     </Button>
-                  </AlertDialogTrigger>
-
-                  <AlertDialogContent className="rounded-3xl border-slate-100 p-6 shadow-2xl">
-                    <form action={formAction}>
-                      <AlertDialogHeader className="space-y-2">
-                        <AlertDialogTitle className="text-xl font-bold text-slate-900">
-                          Cancel Rental Request?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription className="text-sm text-slate-500 leading-relaxed">
-                          Are you sure you want to cancel your rental for{" "}
-                          <span className="font-semibold text-slate-800">
-                            &quot;{rental.gearItem.name}&quot;
-                          </span>
-                          ? This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-
-                      <AlertDialogFooter className="mt-6 gap-2 sm:gap-0">
-                        <AlertDialogCancel className="rounded-2xl border-slate-200 text-slate-600 hover:bg-slate-50">
-                          Keep Rental
-                        </AlertDialogCancel>
-
-                        <AlertDialogAction
-                          type="submit"
-                          disabled={isPending}
-                          className="rounded-2xl bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-600/20"
-                        >
-                          {isPending ? "Cancelling..." : "Yes, Cancel Rental"}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </form>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
+                  </form>
+                )}
+              </div>
             </div>
           </div>
         </div>

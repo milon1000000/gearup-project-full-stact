@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useActionState, useEffect } from "react";
+import React, { useActionState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -21,21 +22,37 @@ interface RentalFormDialogProps {
 }
 
 const RentalFormDialog = ({ isOpen, onClose, gearItemId }: RentalFormDialogProps) => {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState(createRental, null);
+  
+  // একটি রেফারেন্স ব্যবহার করা হলো যাতে টোস্ট এবং রিডাইরেক্ট শুধু একবারই রান হয়
+  const isHandledRef = useRef(false);
 
   useEffect(() => {
-    if (!state) return;
+    if (!state || isHandledRef.current) return;
 
     if (state.success) {
+      isHandledRef.current = true; // ফ্ল্যাগ ট্রু করে দেওয়া হলো
       toast.success(state.message || "Rental created successfully!");
       onClose();
+      
+      router.push("/dashboard/my-rentals");
+      router.refresh();
     } else {
       toast.error(state.message || "Failed to create rental");
     }
-  }, [state, onClose]);
+  }, [state, onClose, router]);
+
+  // ডায়ালগ বন্ধ হলে বা নতুন করে ওপেন হলে রেফারেন্স রিসেট করার জন্য
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      isHandledRef.current = false;
+      onClose();
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Complete Your Rental</DialogTitle>

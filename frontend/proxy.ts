@@ -4,10 +4,9 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { jwtUtils } from "./utils/jwt";
 import { cookies } from "next/headers";
 import { getNewAccessToken } from "./service/refreshToken";
-// import { getSubscriptionStatus } from "./app/(publicGroup)/_actions/getSubscriptionStatus";
 
 const AUTH_ROUTES = ["/login", "/register"];
-const PUBLIC_ROUTES = ["/","/gear", "/category", "/login", "/register"];
+const PUBLIC_ROUTES = ["/", "/gear", "/category", "/login", "/register"];
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -53,7 +52,6 @@ export async function proxy(request: NextRequest) {
 
   if (!decodedAccessToken?.success) {
     cookieStore.delete("accessToken");
-    // return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (decodedAccessToken?.success && decodedAccessToken.data) {
@@ -97,46 +95,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/not-found", request.url));
   }
 
-//   if (pathname === "/premium") {
-//     const subscriptionStatus = await getSubscriptionStatus();
+  if(pathname.startsWith("/my-payment") && userRole !=="CUSTOMER"){
+    return NextResponse.redirect(new URL("/not-found",request.url))
+  }
 
-//     const isActive = Boolean(
-//       subscriptionStatus?.success && subscriptionStatus.data?.isSubscribed,
-//     );
-
-//     if (!isActive) {
-//       return NextResponse.redirect(new URL("/payment", request.url));
-//     }
-//   }
-
-//   if (pathname === "/payment") {
-//     const subscriptionStatus = await getSubscriptionStatus();
-
-//     const isActive = Boolean(
-//       subscriptionStatus?.success && subscriptionStatus.data?.isSubscribed,
-//     );
-
-//     if (isActive) {
-//       return NextResponse.redirect(new URL("/premium", request.url));
-//     }
-//   }
-
-//   //  if(pathname==="/subscription"){
-//   //     return NextResponse.redirect(new URL("/subscription",request.url))
-//   //   }
-
-//   if (pathname === "/subscription") {
-//     const subscriptionStatus = await getSubscriptionStatus();
-//     const isActive = Boolean(
-//       subscriptionStatus?.success && subscriptionStatus.data?.isSubscribed,
-//     );
-
-//     if (!isActive) {
-//       return NextResponse.redirect(new URL("/payment", request.url));
-//     }
-//   }
-
-  //   return NextResponse.redirect(new URL('/', request.url))
   return NextResponse.next();
 }
 

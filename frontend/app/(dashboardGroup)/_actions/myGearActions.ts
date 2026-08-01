@@ -93,11 +93,11 @@ export const getMyGearItems = async () => {
       headers: {
         Cookie: `accessToken=${accessToken}`,
       },
-      cache: "force-cache",
-      next: {
-        revalidate: 60 * 60 * 24,
-        tags: ["my-gear"],
-      },
+      cache: "no-cache",
+      // next: {
+      //   revalidate: 60 * 60 * 24,
+      //   tags: ["my-gear"],
+      // },
     },
   );
 

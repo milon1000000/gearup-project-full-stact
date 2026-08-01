@@ -12,7 +12,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { NavbarProps } from "@/lib/type";
 import { logout } from "@/service/logout";
 import { useRouter } from "next/navigation";
@@ -60,6 +66,25 @@ export function Navbar({ user }: NavbarProps) {
       break;
   }
 
+  // const userMenuItems = [
+  //   {
+  //     label: "Dashboard",
+  //     href: dashboardHref,
+  //     icon: LayoutDashboard,
+  //   },
+  //   {
+  //     label: "Profile",
+  //     href: "/profile",
+  //     icon: User,
+  //   },
+  //   {
+  //     label: "My Payment",
+  //     href: "/my-payment",
+  //     icon: Crown,
+  //   },
+  // ];
+
+
   const userMenuItems = [
     {
       label: "Dashboard",
@@ -71,18 +96,24 @@ export function Navbar({ user }: NavbarProps) {
       href: "/profile",
       icon: User,
     },
-    {
-      label: "My Subscription",
-      href: "/subscription",
-      icon: Crown,
-    },
+    ...(role === "CUSTOMER"
+      ? [
+          {
+            label: "My Payment",
+            href: "/my-payment",
+            icon: Crown,
+          },
+        ]
+      : []),
   ];
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/80 backdrop-blur-md shadow-sm">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-extrabold tracking-tight text-emerald-600 flex items-center gap-2">
+        <Link
+          href="/"
+          className="text-2xl font-extrabold tracking-tight text-emerald-600 flex items-center gap-2"
+        >
           GearUp
         </Link>
 
@@ -124,17 +155,29 @@ export function Navbar({ user }: NavbarProps) {
                   </Avatar>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent align="end" className="w-60 rounded-2xl p-2 shadow-xl border-slate-100">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-60 rounded-2xl p-2 shadow-xl border-slate-100"
+                >
                   <DropdownMenuLabel className="font-normal px-3 py-2">
                     <p className="font-bold text-slate-900">{displayName}</p>
-                    <p className="text-xs text-slate-500 truncate">{displayEmail}</p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {displayEmail}
+                    </p>
                   </DropdownMenuLabel>
 
                   <DropdownMenuSeparator className="bg-slate-100" />
 
                   {userMenuItems.map((item) => (
-                    <DropdownMenuItem key={item.href} asChild className="rounded-xl px-3 py-2.5 cursor-pointer focus:bg-emerald-50 focus:text-emerald-700">
-                      <Link href={item.href} className="flex items-center font-medium text-slate-700">
+                    <DropdownMenuItem
+                      key={item.href}
+                      asChild
+                      className="rounded-xl px-3 py-2.5 cursor-pointer focus:bg-emerald-50 focus:text-emerald-700"
+                    >
+                      <Link
+                        href={item.href}
+                        className="flex items-center font-medium text-slate-700"
+                      >
                         <item.icon className="mr-2.5 h-4 w-4 text-slate-500" />
                         {item.label}
                       </Link>
@@ -143,7 +186,10 @@ export function Navbar({ user }: NavbarProps) {
 
                   <DropdownMenuSeparator className="bg-slate-100" />
 
-                  <DropdownMenuItem onClick={handleLogout} className="rounded-xl px-3 py-2.5 cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-700 font-medium">
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="rounded-xl px-3 py-2.5 cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-700 font-medium"
+                  >
                     <LogOut className="mr-2.5 h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
@@ -151,7 +197,10 @@ export function Navbar({ user }: NavbarProps) {
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-4">
-                <Link href="/login" className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
+                <Link
+                  href="/login"
+                  className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors"
+                >
                   Login
                 </Link>
                 <Link href="/register">
@@ -166,12 +215,19 @@ export function Navbar({ user }: NavbarProps) {
           {/* Mobile Menu (Sheet from Right) */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden rounded-xl text-slate-700 hover:bg-slate-100">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden rounded-xl text-slate-700 hover:bg-slate-100"
+              >
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
 
-            <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 flex flex-col h-full rounded-l-3xl border-l-slate-100">
+            <SheetContent
+              side="right"
+              className="w-[300px] sm:w-[350px] p-0 flex flex-col h-full rounded-l-3xl border-l-slate-100"
+            >
               {/* Header section (Fixed) */}
               <div className="p-6 pb-4 border-b border-slate-100">
                 <SheetHeader className="text-left">
@@ -201,14 +257,25 @@ export function Navbar({ user }: NavbarProps) {
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 px-2">
                       <Avatar className="h-10 w-10 border border-emerald-200">
-                        <AvatarImage src={profileImage || "https://github.com/shadcn.png"} alt={displayName} />
+                        <AvatarImage
+                          src={profileImage || "https://github.com/shadcn.png"}
+                          alt={displayName}
+                        />
                         <AvatarFallback className="bg-emerald-50 text-emerald-700 font-bold">
-                          {displayName.split(" ").map((n) => n[0]).join("").toUpperCase()}
+                          {displayName
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="overflow-hidden">
-                        <p className="font-bold text-sm text-slate-900 truncate">{displayName}</p>
-                        <p className="text-xs text-slate-500 truncate">{displayEmail}</p>
+                        <p className="font-bold text-sm text-slate-900 truncate">
+                          {displayName}
+                        </p>
+                        <p className="text-xs text-slate-500 truncate">
+                          {displayEmail}
+                        </p>
                       </div>
                     </div>
 
@@ -239,12 +306,23 @@ export function Navbar({ user }: NavbarProps) {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <Link href="/login" onClick={() => setIsOpen(false)} className="block">
-                      <Button variant="outline" className="w-full rounded-xl border-slate-200 text-slate-700 font-semibold py-5">
+                    <Link
+                      href="/login"
+                      onClick={() => setIsOpen(false)}
+                      className="block"
+                    >
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-xl border-slate-200 text-slate-700 font-semibold py-5"
+                      >
                         Login
                       </Button>
                     </Link>
-                    <Link href="/register" onClick={() => setIsOpen(false)} className="block">
+                    <Link
+                      href="/register"
+                      onClick={() => setIsOpen(false)}
+                      className="block"
+                    >
                       <Button className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-5 shadow-md shadow-emerald-600/20">
                         Get Started
                       </Button>

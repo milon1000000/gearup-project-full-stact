@@ -1,22 +1,27 @@
+import React from "react";
 import { getAllGear } from "../_actions/getAllGear";
 import GearCard from "./GearCard";
 
 type GearsListProps = {
-  searchParams: Promise<{
+  searchParams?: Promise<{
     [key: string]: string | string[] | undefined;
   }>;
 };
 
 const GearsList = async ({ searchParams }: GearsListProps) => {
-  const query = await searchParams;
-
+  const query = searchParams ? await searchParams : {};
   const result = await getAllGear({ query });
 
   if (!result.success || !result.data || result.data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 rounded-2xl border border-dashed border-slate-200 bg-white">
-        <p className="text-lg font-medium text-slate-700">No Gear Found</p>
-        <p className="text-sm text-slate-500 mt-1">Try searching with a different term or filter criteria.</p>
+      <div className="flex flex-col items-center justify-center py-20 px-4 rounded-3xl border border-dashed border-slate-200 bg-white/50 backdrop-blur-sm shadow-sm">
+        <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+          📦
+        </div>
+        <p className="text-base font-bold text-slate-800">No Gear Found</p>
+        <p className="text-xs text-slate-500 mt-1 text-center max-w-xs">
+          Try adjusting your search query or filter options to find available gear.
+        </p>
       </div>
     );
   }
@@ -24,10 +29,7 @@ const GearsList = async ({ searchParams }: GearsListProps) => {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {result.data.map((gear: any) => (
-        <GearCard
-          key={gear.id || gear._id}
-          gear={gear}
-        />
+        <GearCard key={gear.id || gear._id} gear={gear} />
       ))}
     </div>
   );

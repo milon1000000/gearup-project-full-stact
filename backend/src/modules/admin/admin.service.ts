@@ -3,6 +3,11 @@ import { IUpdateStatus } from "./admin.interface";
 
 const getAllUsers = async () => {
   const users = await prisma.user.findMany({
+    where: {
+      role: {
+        not: "ADMIN", 
+      },
+    },
     orderBy: {
       createdAt: "desc",
     },

@@ -1,5 +1,5 @@
 import { ISidebarItem } from "@/lib/type";
-import { FileText, LayoutDashboard, ListOrdered } from "lucide-react";
+import { FileText, LayoutDashboard, ListOrdered, Users } from "lucide-react";
 
 export const ADMIN_SIDEBAR_ITEMS:ISidebarItem[]=[
     {
@@ -16,5 +16,10 @@ export const ADMIN_SIDEBAR_ITEMS:ISidebarItem[]=[
         label:"All Rentals",
         href:"/admin-dashboard/all-rentals",
         icon:ListOrdered
+    },
+     {
+        label:"All Users",
+        href:"/admin-dashboard/all-users",
+        icon:Users
     }
 ]

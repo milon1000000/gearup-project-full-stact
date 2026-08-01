@@ -14,7 +14,14 @@ import MyGearTableRow from './MyGearTableRow'
 const GearTable = async () => {
   const gearItems = await getMyGearItems()
   const itemsArray = gearItems?.data || gearItems
-  const normalizedGearItems = Array.isArray(itemsArray) ? itemsArray : []
+  
+  // স্টক ০ হলে available: false করে দেওয়া হলো
+  const normalizedGearItems = Array.isArray(itemsArray) 
+    ? itemsArray.map((gear: IGearItem) => ({
+        ...gear,
+        available: gear.stock > 0 ? gear.available : false
+      })) 
+    : []
 
   if (normalizedGearItems.length === 0) {
     return (

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { LoginState, RegisterState } from "@/lib/type";
+import { revalidateTag } from "next/cache";
 
 
 
@@ -91,5 +92,11 @@ export const registerAction = async (
     body: JSON.stringify(payload),
   });
 
-  return await res.json();
+  const result=await res.json();
+
+  if(result.success){
+    revalidateTag("admin-rentals",{expire:0})
+  }
+
+  return result
 };

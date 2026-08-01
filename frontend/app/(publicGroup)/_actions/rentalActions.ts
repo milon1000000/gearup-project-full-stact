@@ -32,6 +32,7 @@ export const createRental = async (
     revalidateTag("my-rentals", { expire: 0 });
     revalidateTag("public-gears", { expire: 0 });
     revalidateTag("single-gear", { expire: 0 });
+    revalidateTag("provider-orders", { expire: 0 });
   }
 
   return result;

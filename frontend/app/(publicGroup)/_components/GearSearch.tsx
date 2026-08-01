@@ -37,7 +37,7 @@ export function GearSearchBar() {
       <Input
         defaultValue={searchParams.get("searchTerm")?.toString() || ""}
         onChange={(e) => handleChange(e.target.value)}
-        placeholder="Search tents, bags, gear..."
+        placeholder="Search tents, brand, or price (e.g. 345)..."
         className="pl-10 h-11 rounded-xl bg-white border-slate-200 shadow-sm focus-visible:ring-blue-600"
       />
     </div>
