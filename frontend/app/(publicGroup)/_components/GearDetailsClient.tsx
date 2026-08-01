@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import GearDetails from "./GearDetails";
 import RentalFormDialog from "./rentalFormDialog";
-import { Button } from "@/components/ui/button";
 
 interface Props {
   gear: any;

@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useActionState, useEffect } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Package, CircleDollarSign, Ban, CreditCard } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Calendar, Package, CircleDollarSign, Ban, CreditCard, Star, MessageSquarePlus } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,8 +21,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { cancleMyRental } from "../_actions/getRentals";
 import { createPayment } from "../_actions/mypaymentActions";
+import { createReviews } from "../_actions/reviewActions"; // আপনার সার্ভার অ্যাকশনের সঠিক পাথ দিন
 
 interface MyRentalCardProps {
   rental: {
@@ -30,6 +43,7 @@ interface MyRentalCardProps {
     totalPrice: number;
     status: string;
     gearItem: {
+      id: string;
       name: string;
       image: string;
       brand: string;
@@ -39,18 +53,29 @@ interface MyRentalCardProps {
 }
 
 const MyRentalCard = ({ rental }: MyRentalCardProps) => {
+  // Review Modal State
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+
+  // Review Action Hook
+  const [reviewState, reviewFormAction, isReviewPending] = useActionState(
+    createReviews,
+    null
+  );
+
   // 1. Cancel Rental Action Hook
   const cancelRentalAction = cancleMyRental.bind(null, rental.id);
   const [cancelState, cancelFormAction, isCancelPending] = useActionState(
     cancelRentalAction,
-    null,
+    null
   );
 
   // 2. Payment Action Hook bound with rental.id as rentalOrderId
   const paymentAction = createPayment.bind(null, rental.id);
   const [paymentState, paymentFormAction, isPaymentPending] = useActionState(
     paymentAction,
-    null,
+    null
   );
 
   useEffect(() => {
@@ -75,6 +100,20 @@ const MyRentalCard = ({ rental }: MyRentalCardProps) => {
       }
     }
   }, [paymentState]);
+
+  // Review Response Handle
+  useEffect(() => {
+    if (reviewState) {
+      if (reviewState.success) {
+        toast.success(reviewState.message || "Review submitted successfully!");
+        setIsReviewOpen(false);
+        setComment("");
+        setRating(5);
+      } else {
+        toast.error(reviewState.message || "Failed to submit review.");
+      }
+    }
+  }, [reviewState]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -103,6 +142,7 @@ const MyRentalCard = ({ rental }: MyRentalCardProps) => {
 
   const isCancellable = rental.status === "PENDING";
   const isPayable = rental.status === "CONFIRMED";
+  const isReturnable = rental.status === "RETURNED";
 
   return (
     <Card className="overflow-hidden border border-slate-100 shadow-md hover:shadow-lg transition-all rounded-2xl bg-white">
@@ -225,6 +265,94 @@ const MyRentalCard = ({ rental }: MyRentalCardProps) => {
                       {isPaymentPending ? "Processing..." : "Pay Now"}
                     </Button>
                   </form>
+                )}
+
+                {/* Review Button (Only if RETURNED) */}
+                {isReturnable && (
+                  <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold h-8 px-4 gap-1.5 shadow-lg shadow-blue-600/20"
+                      >
+                        <MessageSquarePlus className="h-3.5 w-3.5" />
+                        Write Review
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="rounded-3xl border-slate-100 p-6 shadow-2xl sm:max-w-md">
+                      <form action={reviewFormAction}>
+                        {/* Hidden input to pass gearItemId */}
+                        <input type="hidden" name="gearItemId" value={rental.gearItem.id} />
+
+                        <DialogHeader className="space-y-2 mb-4">
+                          <DialogTitle className="text-xl font-bold text-slate-900">
+                            Rate Your Experience
+                          </DialogTitle>
+                          <DialogDescription className="text-sm text-slate-500">
+                            Share your feedback for <span className="font-semibold text-slate-800">&quot;{rental.gearItem.name}&quot;</span>.
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-4">
+                          {/* Rating Input */}
+                          <div className="space-y-1.5">
+                            <Label htmlFor="rating" className="text-xs font-semibold text-slate-700">
+                              Rating (1 to 5 Stars)
+                            </Label>
+                            <div className="flex items-center gap-2">
+                              <Input
+                                id="rating"
+                                name="rating"
+                                type="number"
+                                min="1"
+                                max="5"
+                                value={rating}
+                                onChange={(e) => setRating(Number(e.target.value))}
+                                className="rounded-xl border-slate-200"
+                                required
+                              />
+                              <Star className="h-5 w-5 text-amber-500 fill-amber-500 shrink-0" />
+                            </div>
+                          </div>
+
+                          {/* Comment Input */}
+                          <div className="space-y-1.5">
+                            <Label htmlFor="comment" className="text-xs font-semibold text-slate-700">
+                              Your Comment
+                            </Label>
+                            <Textarea
+                              id="comment"
+                              name="comment"
+                              placeholder="Write your feedback here..."
+                              value={comment}
+                              onChange={(e) => setComment(e.target.value)}
+                              className="rounded-xl border-slate-200 resize-none h-24"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <DialogFooter className="mt-6 gap-2 sm:gap-0">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setIsReviewOpen(false)}
+                            className="rounded-2xl border-slate-200 text-slate-600 hover:bg-slate-50"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            type="submit"
+                            disabled={isReviewPending}
+                            className="rounded-2xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20"
+                          >
+                            {isReviewPending ? "Submitting..." : "Submit Review"}
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 )}
               </div>
             </div>
