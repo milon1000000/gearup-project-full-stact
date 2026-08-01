@@ -16,7 +16,6 @@ const PaymentSuccessPage = ({
       <div className="max-w-md w-full space-y-8">
         <Card className="rounded-3xl border border-slate-100 shadow-xl bg-white overflow-hidden text-center">
           <CardContent className="p-8 sm:p-10 space-y-6">
-            
             {/* Success Icon */}
             <div className="mx-auto w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-inner">
               <CheckCircle2 className="h-12 w-12 text-emerald-600 animate-bounce" />
@@ -31,7 +30,8 @@ const PaymentSuccessPage = ({
                 Thank You For Your Payment!
               </h1>
               <p className="text-sm text-slate-500 leading-relaxed">
-                Your payment has been processed successfully and your gear rental order is now confirmed.
+                Your payment has been processed successfully and your gear
+                rental order is now confirmed.
               </p>
             </div>
 
@@ -53,7 +53,7 @@ const PaymentSuccessPage = ({
                 asChild
                 className="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-11 shadow-lg shadow-emerald-600/20 gap-2"
               >
-                <Link href="/profile/rentals">
+                <Link href="/dashboard/my-rentals">
                   <Package className="h-4 w-4" />
                   View My Rentals
                   <ArrowRight className="h-4 w-4 ml-auto" />
@@ -71,13 +71,15 @@ const PaymentSuccessPage = ({
                 </Link>
               </Button>
             </div>
-
           </CardContent>
         </Card>
 
         {/* Footer Support Text */}
         <p className="text-center text-xs text-slate-400">
-          Having trouble? <span className="text-emerald-600 font-medium cursor-pointer hover:underline">Contact Support</span>
+          Having trouble?{" "}
+          <span className="text-emerald-600 font-medium cursor-pointer hover:underline">
+            Contact Support
+          </span>
         </p>
       </div>
     </div>
