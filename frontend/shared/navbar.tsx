@@ -30,6 +30,7 @@ const navItems = [
   { label: "About", href: "/about" },
   { label: "Category", href: "/category" },
   { label: "GearItem", href: "/gear" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function Navbar({ user }: NavbarProps) {

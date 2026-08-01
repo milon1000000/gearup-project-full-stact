@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import { getNewAccessToken } from "./service/refreshToken";
 
 const AUTH_ROUTES = ["/login", "/register"];
-const PUBLIC_ROUTES = ["/", "/gear", "/category", "/login", "/register"];
+const PUBLIC_ROUTES = ["/", "/gear","/about", "/category", "/login", "/register"];
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

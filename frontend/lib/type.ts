@@ -211,3 +211,32 @@ export type IGetRentalResponse = {
     };
   };
 };
+
+// ---- Shared dynamic data types (public pages, dashboards) ----
+
+export type ICategory = {
+  id: string;
+  name: string;
+  description?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type IReview = {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  createdAt?: string;
+  customerId?: string;
+  gearItemId?: string;
+  customer?: {
+    id?: string;
+    name?: string;
+    email?: string;
+  } | null;
+  gearItem?: {
+    id?: string;
+    name?: string;
+    image?: string | null;
+  } | null;
+};
