@@ -28,8 +28,6 @@ import { useState } from "react";
 const navItems = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Contact", href: "/contact" },
   { label: "Category", href: "/category" },
   { label: "GearItem", href: "/gear" },
 ];
@@ -65,25 +63,6 @@ export function Navbar({ user }: NavbarProps) {
       dashboardHref = "/admin-dashboard";
       break;
   }
-
-  // const userMenuItems = [
-  //   {
-  //     label: "Dashboard",
-  //     href: dashboardHref,
-  //     icon: LayoutDashboard,
-  //   },
-  //   {
-  //     label: "Profile",
-  //     href: "/profile",
-  //     icon: User,
-  //   },
-  //   {
-  //     label: "My Payment",
-  //     href: "/my-payment",
-  //     icon: Crown,
-  //   },
-  // ];
-
 
   const userMenuItems = [
     {
