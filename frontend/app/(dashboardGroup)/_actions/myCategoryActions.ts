@@ -8,7 +8,7 @@ export const createCategory = async (
   formData: FormData,
 ) => {
   const payload = {
-    name: formData.get("name"),
+    name: (formData.get("name") as string)?.trim(),
     description: formData.get("description"),
   };
   const accessToken = await isAccessTokenExists();
@@ -53,7 +53,7 @@ export const updateCategory = async (
   const id = formData.get("id");
 
   const payload = {
-    name: formData.get("name"),
+    name: (formData.get("name") as string)?.trim(),
     description: formData.get("description"),
   };
 

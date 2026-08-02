@@ -8,9 +8,15 @@ const createCategory = async (payload: CreateCategoryPayload) => {
     throw new Error("name is required");
   }
 
-  const existingCategory = await prisma.category.findUnique({
+  const normalizedName = name.trim();
+
+  // Case-insensitive duplicate check (e.g. "Camping" vs "camping")
+  const existingCategory = await prisma.category.findFirst({
     where: {
-      name,
+      name: {
+        equals: normalizedName,
+        mode: "insensitive",
+      },
     },
   });
 
@@ -20,7 +26,7 @@ const createCategory = async (payload: CreateCategoryPayload) => {
 
   const category = await prisma.category.create({
     data: {
-      name,
+      name: normalizedName,
       description,
     },
   });
@@ -55,27 +61,33 @@ const updateCategory = async (payload:IUpdateCategory,categoryId:string) => {
     };
 
     if (name) {
-    const existingCategory = await prisma.category.findUnique({
+      const normalizedName = name.trim();
+
+      // Case-insensitive duplicate check, excluding the category being updated
+      const existingCategory = await prisma.category.findFirst({
+        where: {
+          name: {
+            equals: normalizedName,
+            mode: "insensitive",
+          },
+        },
+      });
+
+      if (existingCategory && existingCategory.id !== categoryId) {
+        throw new Error("Category already exists");
+      }
+    }
+
+    const updateCategory = await prisma.category.update({
       where: {
-        name,
+        id: categoryId,
+      },
+      data: {
+        ...(name && { name: name.trim() }),
+        ...(description && { description }),
       },
     });
- 
-     if (existingCategory && existingCategory.id !== categoryId) {
-      throw new Error("Category already exists");
-    }
-  }
-
-   const updateCategory=await prisma.category.update({
-    where:{
-        id:categoryId
-    },
-   data: {
-  ...(name && { name }),
-  ...(description && { description }),
-}
-   });
-   return updateCategory;
+    return updateCategory;
 };
 
 const deleteCategory = async (categoryId: string) => {

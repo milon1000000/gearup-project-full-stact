@@ -1,7 +1,18 @@
 'use client';
 
-import { useActionState, useRef } from "react";
-import { Shield, Mail, Calendar, Phone, CheckCircle, Ban, Loader2 } from "lucide-react";
+import { useActionState, useRef, useState } from "react";
+import { Shield, Mail, Calendar, Phone, CheckCircle, Ban, Loader2, MoreHorizontal } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { adminUpdateUser } from "../_actions/adminUsersUpdateStatus";
 
 type UserItem = {
@@ -22,6 +33,8 @@ type AdminUserCardProps = {
 
 export default function AdminUserCard({ user, isOpen, setIsOpen }: AdminUserCardProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<'ACTIVE' | 'SUSPENDED'>('ACTIVE');
 
   const currentActiveStatus = user.status || 'ACTIVE';
 
@@ -42,17 +55,31 @@ export default function AdminUserCard({ user, isOpen, setIsOpen }: AdminUserCard
   const displayedStatus = state?.success && state?.status ? state.status : currentActiveStatus;
   const isDisplayedActive = displayedStatus === 'ACTIVE';
 
-  const handleStatusSelect = (newStatus: string) => {
+  const targetStatus: 'ACTIVE' | 'SUSPENDED' = isDisplayedActive ? 'SUSPENDED' : 'ACTIVE';
+
+  // Dropdown option selected → open the confirmation dialog
+  const handleMenuSelect = () => {
     setIsOpen(false);
-    setTimeout(() => {
-      if (formRef.current) {
-        const input = formRef.current.elements.namedItem("status") as HTMLInputElement;
-        if (input) {
-          input.value = newStatus;
-        }
-        formRef.current.requestSubmit();
+    setPendingStatus(targetStatus);
+    setTimeout(() => setConfirmOpen(true), 50);
+  };
+
+  // Cancel → close everything, do nothing
+  const handleCancelAll = () => {
+    setConfirmOpen(false);
+    setIsOpen(false);
+  };
+
+  // Confirm (Yes) → submit the form to apply the status change
+  const handleConfirm = () => {
+    setConfirmOpen(false);
+    if (formRef.current) {
+      const input = formRef.current.elements.namedItem("status") as HTMLInputElement;
+      if (input) {
+        input.value = pendingStatus;
       }
-    }, 50);
+      formRef.current.requestSubmit();
+    }
   };
 
   return (
@@ -60,7 +87,7 @@ export default function AdminUserCard({ user, isOpen, setIsOpen }: AdminUserCard
       {/* User Name & Avatar Initial */}
       <td className="py-4 px-6">
         <div className="flex items-center space-x-3">
-          <div className="size-10 rounded-full bg-pink-100 text-pink-600 font-bold flex items-center justify-center flex-shrink-0 shadow-sm uppercase">
+          <div className="size-10 rounded-full bg-pink-100 text-pink-600 font-bold flex items-center justify-center shrink-0 shadow-sm uppercase">
             {user.name ? user.name.charAt(0) : 'U'}
           </div>
           <div>
@@ -97,39 +124,44 @@ export default function AdminUserCard({ user, isOpen, setIsOpen }: AdminUserCard
         </span>
       </td>
 
-      {/* Status with Toggle Popup & Action */}
+      {/* Status with 3-dot Menu & Confirm Dialog */}
       <td className="py-4 px-6 text-right relative">
-        <div className="inline-block text-left">
-          {/* একটিমাত্র ফর্ম যা পুরো অ্যাকশন হ্যান্ডেল করবে */}
+        <div className="inline-flex items-center justify-end gap-2">
+          {/* Hidden form — handles the actual status update */}
           <form ref={formRef} action={formAction}>
-            <input type="hidden" name="status" defaultValue={isDisplayedActive ? 'SUSPENDED' : 'ACTIVE'} />
-
-            <button
-              type="button"
-              onClick={() => !isPending && setIsOpen(!isOpen)}
-              disabled={isPending}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer ${
-                isDisplayedActive 
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100" 
-                  : "bg-rose-50 text-rose-700 border-rose-100 hover:bg-rose-100"
-              }`}
-            >
-              {isPending ? (
-                <Loader2 className="size-3 animate-spin" />
-              ) : (
-                <span className={`size-1.5 rounded-full ${isDisplayedActive ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`}></span>
-              )}
-              {displayedStatus}
-            </button>
+            <input type="hidden" name="status" />
           </form>
 
-          {/* Popup / Dropdown Menu */}
+          {/* Status Badge (non-interactive) */}
+          <span
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold border ${
+              isDisplayedActive
+                ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                : "bg-rose-50 text-rose-700 border-rose-100"
+            }`}
+          >
+            <span className={`size-1.5 rounded-full ${isDisplayedActive ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`}></span>
+            {displayedStatus}
+          </span>
+
+          {/* 3-dot menu button */}
+          <button
+            type="button"
+            onClick={() => !isPending && setIsOpen(!isOpen)}
+            disabled={isPending}
+            aria-label="Status options"
+            className="size-8 inline-flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 border border-transparent transition-all cursor-pointer"
+          >
+            {isPending ? <Loader2 className="size-4 animate-spin" /> : <MoreHorizontal className="size-4" />}
+          </button>
+
+          {/* Dropdown Menu */}
           {isOpen && (
-            <div className="absolute right-6 mt-2 w-36 bg-white rounded-2xl shadow-lg border border-slate-100 py-1.5 z-50 text-left">
+            <div className="absolute right-4 mt-2 w-40 bg-white rounded-2xl shadow-lg border border-slate-100 py-1.5 z-50 text-left">
               {isDisplayedActive ? (
                 <button
                   type="button"
-                  onClick={() => handleStatusSelect('SUSPENDED')}
+                  onClick={handleMenuSelect}
                   className="w-full px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 font-medium transition-colors cursor-pointer"
                 >
                   <Ban className="size-3.5" />
@@ -138,17 +170,53 @@ export default function AdminUserCard({ user, isOpen, setIsOpen }: AdminUserCard
               ) : (
                 <button
                   type="button"
-                  onClick={() => handleStatusSelect('ACTIVE')}
+                  onClick={handleMenuSelect}
                   className="w-full px-4 py-2 text-xs text-emerald-600 hover:bg-emerald-50 flex items-center gap-2 font-medium transition-colors cursor-pointer"
                 >
                   <CheckCircle className="size-3.5" />
                   Make Active
                 </button>
               )}
+              <div className="border-t border-slate-100 my-1" />
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="w-full px-4 py-2 text-xs text-slate-500 hover:bg-slate-50 flex items-center justify-center font-medium transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
             </div>
           )}
         </div>
       </td>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogMedia className={isDisplayedActive ? "bg-rose-50 text-rose-600" : "bg-emerald-50 text-emerald-600"}>
+              {isDisplayedActive ? <Ban /> : <CheckCircle />}
+            </AlertDialogMedia>
+            <AlertDialogTitle>
+              {isDisplayedActive ? "Suspend this user?" : "Activate this user?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {isDisplayedActive
+                ? `Are you sure you want to suspend ${user.name}? They won't be able to use the platform while suspended.`
+                : `Are you sure you want to activate ${user.name}? They will regain full access to the platform.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelAll}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant={isDisplayedActive ? "destructive" : "default"}
+              onClick={handleConfirm}
+            >
+              Yes, {isDisplayedActive ? "Suspend" : "Activate"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </tr>
   );
 }
