@@ -59,9 +59,17 @@ const ProviderOrderActionCell = ({ orderId, status }: ActionCellProps) => {
           <AlertDialogTrigger asChild>
             <Button
               size="sm"
+              disabled={isReturnPending}
               className="rounded-xl text-xs h-8 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold gap-1.5"
             >
-              <span>{status}</span>
+              {isReturnPending ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Returning...</span>
+                </>
+              ) : (
+                <span>{status}</span>
+              )}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-3xl">
@@ -98,9 +106,17 @@ const ProviderOrderActionCell = ({ orderId, status }: ActionCellProps) => {
           <AlertDialogTrigger asChild>
             <Button
               size="sm"
-              className="rounded-xl text-xs h-8 bg-amber-600 hover:bg-amber-700 text-white font-semibold"
+              disabled={isConfirmPending}
+              className="rounded-xl text-xs h-8 bg-amber-600 hover:bg-amber-700 text-white font-semibold gap-1.5"
             >
-              <span>{status}</span>
+              {isConfirmPending ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Confirming...</span>
+                </>
+              ) : (
+                <span>{status}</span>
+              )}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-3xl">

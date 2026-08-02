@@ -46,11 +46,7 @@ export const getAllGear = async ({
   const res = await fetch(
     `${process.env.BACKEND_API_URL}/api/gear${params.toString() ? `?${params.toString()}` : ""}`,
     {
-      cache: "force-cache",
-      next: {
-        revalidate: 60 * 60 * 24,
-        tags: ["public-gears"],
-      },
+      cache: "no-store",
     }
   );
 
@@ -66,11 +62,7 @@ export const getSingleGear = async (id: string) => {
   const res = await fetch(
     `${process.env.BACKEND_API_URL}/api/gear/${id}`,
     {
-      cache: "force-cache",
-      next: {
-        revalidate: 60 * 60 * 24,
-        tags: ["single-gear"],
-      },
+      cache: "no-store",
     }
   );
 

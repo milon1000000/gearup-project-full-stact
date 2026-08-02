@@ -35,11 +35,7 @@ export const createCategory = async (
 
 export const getAllCaregory = async () => {
   const res = await fetch(`${process.env.BACKEND_API_URL}/api/categories`, {
-    cache: "force-cache",
-    next: {
-      revalidate: 60 * 60 * 24,
-      tags: ["all-category"],
-    },
+    cache: "no-store",
   });
 
   const result = await res.json();
