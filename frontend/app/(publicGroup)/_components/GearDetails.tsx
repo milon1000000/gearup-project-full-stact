@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { isValidImageUrl } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -85,10 +86,9 @@ const GearDetails = ({ gear, userRole, onRentClick, reviews = [], isLoading = fa
     return <GearSkeleton />;
   }
 
-  const imageSrc =
-    typeof gear?.image === "string" && gear.image && !gear.image.includes("example.com")
-      ? gear.image
-      : "/placeholder-image.svg";
+  const imageSrc = isValidImageUrl(gear.image)
+    ? gear.image!
+    : "/placeholder-image.svg";
 
   const refreshMyReviews = async () => {
     const res = await getMyReviews();

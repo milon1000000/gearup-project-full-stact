@@ -22,8 +22,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import ProviderCard from "./ProviderCard";
 import ProviderOrderTable from "./ProviderOrderTable";
+import { isValidImageUrl } from "@/lib/utils";
 
 const ACTIVE_STATUSES = ["CONFIRMED", "PAID", "PICKED_UP"];
 
@@ -106,7 +106,6 @@ const ProviderDashboardContent = ({ user, gears, orders }: DashboardProps) => {
     return { activeRentals, pendingRequests, earnings };
   }, [orders]);
 
-  // PENDING orders first for quick action
   const sortedOrders = useMemo(() => {
     const priority: Record<string, number> = {
       PENDING: 0,
@@ -164,30 +163,49 @@ const ProviderDashboardContent = ({ user, gears, orders }: DashboardProps) => {
 
       {/* Stats Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <ProviderCard
-          title="Total Listed Gears"
-          value={gears.length}
-          icon={<Package className="h-6 w-6" />}
-          description="Active in marketplace"
-        />
-        <ProviderCard
-          title="Active Rentals"
-          value={stats.activeRentals.length}
-          icon={<ShoppingBag className="h-6 w-6" />}
-          description="Currently rented out"
-        />
-        <ProviderCard
-          title="Pending Requests"
-          value={stats.pendingRequests.length}
-          icon={<Clock className="h-6 w-6" />}
-          description="Requires your approval"
-        />
-        <ProviderCard
-          title="Total Earnings"
-          value={`৳${stats.earnings.toLocaleString()}`}
-          icon={<DollarSign className="h-6 w-6" />}
-          description="Lifetime revenue"
-        />
+        <Card className="p-6 border-slate-100 shadow-sm rounded-3xl bg-white flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Listed Gears</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{gears.length}</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Active in marketplace</p>
+          </div>
+          <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <Package className="h-6 w-6" />
+          </div>
+        </Card>
+
+        <Card className="p-6 border-slate-100 shadow-sm rounded-3xl bg-white flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Rentals</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{stats.activeRentals.length}</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Currently rented out</p>
+          </div>
+          <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <ShoppingBag className="h-6 w-6" />
+          </div>
+        </Card>
+
+        <Card className="p-6 border-slate-100 shadow-sm rounded-3xl bg-white flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Requests</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{stats.pendingRequests.length}</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Requires your approval</p>
+          </div>
+          <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <Clock className="h-6 w-6" />
+          </div>
+        </Card>
+
+        <Card className="p-6 border-slate-100 shadow-sm rounded-3xl bg-white flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Earnings</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 mt-1">৳{stats.earnings.toLocaleString()}</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Lifetime revenue</p>
+          </div>
+          <div className="h-12 w-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+            <DollarSign className="h-6 w-6" />
+          </div>
+        </Card>
       </div>
 
       {/* Tabs Section for Provider Management */}
@@ -231,8 +249,8 @@ const ProviderDashboardContent = ({ user, gears, orders }: DashboardProps) => {
                   className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center gap-4 hover:shadow-md transition-all"
                 >
                   <div className="relative w-20 h-20 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden shrink-0">
-                    {gear.image ? (
-                      <Image src={gear.image} alt={gear.name} fill className="object-cover p-1" />
+                    {isValidImageUrl(gear.image) ? (
+                      <Image src={gear.image!} alt={gear.name} fill className="object-cover p-1" />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-slate-300">
                         <Package className="h-6 w-6" />
@@ -242,7 +260,7 @@ const ProviderDashboardContent = ({ user, gears, orders }: DashboardProps) => {
 
                   <div className="flex-1 min-w-0 space-y-1">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
-                      {gear.brand}
+                      {gear.brand || "Brand"}
                     </span>
                     <h4 className="text-sm font-bold text-slate-900 truncate">
                       {gear.name}
@@ -268,15 +286,6 @@ const ProviderDashboardContent = ({ user, gears, orders }: DashboardProps) => {
                   </div>
                 </div>
               ))}
-
-              {gears.length > 6 && (
-                <Link
-                  href="/my-gear"
-                  className="bg-slate-50 rounded-2xl border border-dashed border-slate-200 p-4 flex items-center justify-center text-xs font-bold text-slate-500 hover:text-emerald-600 hover:border-emerald-300 transition-colors"
-                >
-                  View all {gears.length} gears <ArrowRight className="h-4 w-4 ml-1.5" />
-                </Link>
-              )}
             </div>
           )}
         </TabsContent>
@@ -345,37 +354,6 @@ const ProviderDashboardContent = ({ user, gears, orders }: DashboardProps) => {
           )}
         </TabsContent>
       </Tabs>
-
-      {/* Quick action strip */}
-      <Card className="border-slate-100 shadow-sm rounded-3xl bg-white p-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="h-11 w-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-              <Package className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">
-                Boost your inventory
-              </h3>
-              <p className="text-xs text-slate-500">
-                Add more gear to reach more customers and grow your earnings.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link href="/provider-dashboard/rental-orders">
-              <Button variant="outline" size="sm" className="rounded-xl text-xs h-9">
-                View All Orders
-              </Button>
-            </Link>
-            <Link href="/my-gear">
-              <Button size="sm" className="rounded-xl text-xs h-9 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold gap-1.5">
-                <Plus className="h-4 w-4" /> Add Gear
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </Card>
     </div>
   );
 };

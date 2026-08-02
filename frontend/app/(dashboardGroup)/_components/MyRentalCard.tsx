@@ -33,6 +33,7 @@ import {
 import { cancleMyRental } from "../_actions/getRentals";
 import { createPayment } from "../_actions/mypaymentActions";
 import { createReviews } from "../_actions/reviewActions"; // আপনার সার্ভার অ্যাকশনের সঠিক পাথ দিন
+import { isValidImageUrl } from "@/lib/utils";
 
 interface MyRentalCardProps {
   rental: {
@@ -151,7 +152,11 @@ const MyRentalCard = ({ rental }: MyRentalCardProps) => {
           {/* Gear Image */}
           <div className="relative w-full sm:w-28 h-28 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden shrink-0 flex items-center justify-center">
             <Image
-              src={rental.gearItem.image || "/placeholder-image.svg"}
+              src={
+                isValidImageUrl(rental.gearItem.image)
+                  ? rental.gearItem.image
+                  : "/placeholder-image.svg"
+              }
               alt={rental.gearItem.name}
               fill
               className="object-cover p-1"

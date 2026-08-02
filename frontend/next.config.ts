@@ -2,31 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    // Gear image URLs come from user input and can be hosted anywhere,
+    // so allow any https/http host instead of failing on unconfigured hosts.
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "imgd.aeplcdn.com",
-        pathname: "/**",
+        hostname: "**",
       },
       {
-        protocol: "https",
-        hostname: "encrypted-tbn0.gstatic.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "example.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "en.wikipedia.org",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "upload.wikimedia.org", 
-        pathname: "/**",
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },

@@ -23,6 +23,7 @@ import AdminPageCard from "./AdminPageCard";
 import AdminRentalTable from "./AdminRentalTable";
 import AdminUsersList from "./AdminUsersList";
 import { deleteReview } from "@/app/(publicGroup)/_actions/getMyReviews";
+import { isValidImageUrl } from "@/lib/utils";
 
 type AdminGearData = {
   id: string;
@@ -271,7 +272,7 @@ const AdminDashboardContent = ({ user, gears, rentals, users, reviews }: AdminPr
                         <td className="py-4 px-6">
                           <div className="flex items-center space-x-3">
                             <div className="relative w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden shrink-0">
-                              {gear.image ? (
+                              {isValidImageUrl(gear.image) ? (
                                 <Image src={gear.image} alt={gear.name} fill className="object-cover p-0.5" />
                               ) : (
                                 <div className="h-full w-full flex items-center justify-center text-slate-300">

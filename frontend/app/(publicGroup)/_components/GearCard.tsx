@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Package, ShieldCheck, Tag } from "lucide-react";
 import Link from "next/link";
+import { isValidImageUrl } from "@/lib/utils";
 
 type GearCardProps = {
   gear: {
@@ -21,10 +22,9 @@ type GearCardProps = {
 };
 
 const GearCard = ({ gear }: GearCardProps) => {
-  const imageSrc =
-    typeof gear?.image === "string" && gear.image && !gear.image.includes("example.com")
-      ? gear.image
-      : "/placeholder-image.svg";
+  const imageSrc = isValidImageUrl(gear.image)
+    ? gear.image!
+    : "/placeholder-image.svg";
 
   return (
     <Card className="group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl w-full">

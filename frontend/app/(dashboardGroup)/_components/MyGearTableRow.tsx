@@ -33,6 +33,7 @@ import {
 
 import { IGearItem } from "@/lib/type";
 import { deleteGear } from "../_actions/myGearActions";
+import { isValidImageUrl } from "@/lib/utils";
 
 type MyGearTableRowProps = {
   gear: IGearItem;
@@ -68,7 +69,7 @@ const MyGearTableRow = ({ gear }: MyGearTableRowProps) => {
         <div className="flex items-center gap-3">
           <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100 border border-slate-200/60 shadow-sm">
             <Image
-              src={gear.image || "/placeholder-image.svg"}
+              src={isValidImageUrl(gear.image) ? gear.image : "/placeholder-image.svg"}
               alt={gear.name}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
