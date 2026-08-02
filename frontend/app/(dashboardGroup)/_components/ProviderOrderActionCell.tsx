@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useActionState } from "react";
+import React, { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -27,6 +26,8 @@ interface ActionCellProps {
 
 const ProviderOrderActionCell = ({ orderId, status }: ActionCellProps) => {
   const router = useRouter();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [returnOpen, setReturnOpen] = useState(false);
 
   // ১. PAID থেকে RETURNED করার জন্য অ্যাকশন
   const [returnState, returnFormAction, isReturnPending] = useActionState(
@@ -34,6 +35,7 @@ const ProviderOrderActionCell = ({ orderId, status }: ActionCellProps) => {
       const result = await updateRentalReturn(orderId);
       if (result?.success) {
         router.refresh();
+        setReturnOpen(false);
       }
       return result;
     },
@@ -46,6 +48,7 @@ const ProviderOrderActionCell = ({ orderId, status }: ActionCellProps) => {
       const result = await updateRentalStatus(orderId);
       if (result?.success) {
         router.refresh();
+        setConfirmOpen(false);
       }
       return result;
     },
@@ -55,21 +58,19 @@ const ProviderOrderActionCell = ({ orderId, status }: ActionCellProps) => {
   return (
     <div className="flex items-center justify-center gap-2">
       {status === "PAID" ? (
-        <AlertDialog>
+        <AlertDialog
+          open={returnOpen}
+          onOpenChange={(open) => {
+            if (!open && isReturnPending) return;
+            setReturnOpen(open);
+          }}
+        >
           <AlertDialogTrigger asChild>
             <Button
               size="sm"
-              disabled={isReturnPending}
-              className="rounded-xl text-xs h-8 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold gap-1.5"
+              className="rounded-xl text-xs h-8 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
             >
-              {isReturnPending ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  <span>Returning...</span>
-                </>
-              ) : (
-                <span>{status}</span>
-              )}
+              <span>{status}</span>
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-3xl">
@@ -83,40 +84,45 @@ const ProviderOrderActionCell = ({ orderId, status }: ActionCellProps) => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-xl">
+              <AlertDialogCancel
+                className="rounded-xl"
+                disabled={isReturnPending}
+              >
                 Cancel
               </AlertDialogCancel>
               <form action={returnFormAction}>
-                <AlertDialogAction
+                <Button
                   type="submit"
                   disabled={isReturnPending}
-                  className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white w-full"
+                  className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white w-full gap-1.5"
                 >
-                  {isReturnPending && (
-                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  {isReturnPending ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Returning...
+                    </>
+                  ) : (
+                    "Yes, Return"
                   )}
-                  Yes, Return
-                </AlertDialogAction>
+                </Button>
               </form>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       ) : status === "PENDING" ? (
-        <AlertDialog>
+        <AlertDialog
+          open={confirmOpen}
+          onOpenChange={(open) => {
+            if (!open && isConfirmPending) return;
+            setConfirmOpen(open);
+          }}
+        >
           <AlertDialogTrigger asChild>
             <Button
               size="sm"
-              disabled={isConfirmPending}
-              className="rounded-xl text-xs h-8 bg-amber-600 hover:bg-amber-700 text-white font-semibold gap-1.5"
+              className="rounded-xl text-xs h-8 bg-amber-600 hover:bg-amber-700 text-white font-semibold"
             >
-              {isConfirmPending ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  <span>Confirming...</span>
-                </>
-              ) : (
-                <span>{status}</span>
-              )}
+              <span>{status}</span>
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-3xl">
@@ -129,20 +135,27 @@ const ProviderOrderActionCell = ({ orderId, status }: ActionCellProps) => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-xl">
+              <AlertDialogCancel
+                className="rounded-xl"
+                disabled={isConfirmPending}
+              >
                 Cancel
               </AlertDialogCancel>
               <form action={confirmFormAction}>
-                <AlertDialogAction
+                <Button
                   type="submit"
                   disabled={isConfirmPending}
-                  className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white w-full"
+                  className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white w-full gap-1.5"
                 >
-                  {isConfirmPending && (
-                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  {isConfirmPending ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Confirming...
+                    </>
+                  ) : (
+                    "Yes, Confirm"
                   )}
-                  Yes, Confirm
-                </AlertDialogAction>
+                </Button>
               </form>
             </AlertDialogFooter>
           </AlertDialogContent>
