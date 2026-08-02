@@ -18,6 +18,16 @@ const nextConfig: NextConfig = {
         hostname: "example.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "en.wikipedia.org",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org", 
+        pathname: "/**",
+      },
     ],
   },
 };
