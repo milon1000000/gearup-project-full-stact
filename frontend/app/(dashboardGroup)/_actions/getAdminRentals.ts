@@ -11,11 +11,7 @@ export const getAdminRentals = async () => {
       headers: {
         Cookie: `accessToken=${accessToken}`,
       },
-      cache: "force-cache",
-      next: {
-        revalidate: 60 * 60 * 24,
-        tags: ["admin-rentals"],
-      },
+      cache: "no-store",
     }
   );
 

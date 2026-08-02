@@ -12,11 +12,7 @@ export const getProviderOrders = async () => {
       headers: {
         Cookie: `accessToken=${accessToken}`,
       },
-      cache: "force-cache",
-      next: {
-        revalidate: 60 * 60 * 24,
-        tags: ["provider-orders"],
-      },
+      cache: "no-store",
     },
   );
 
