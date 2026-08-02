@@ -19,7 +19,6 @@ import {
   HeartHandshake,
   ChevronRight,
   Clock,
-  Rocket,
   Target,
   Zap,
   Quote,
@@ -39,8 +38,6 @@ const categoryColors = [
   "bg-orange-50 text-orange-600",
 ];
 
-// Gear images come from user input; isValidImageUrl (lib/utils) guards against bad URLs
-
 const AboutPage = async () => {
   const [gearRes, categoriesRes] = await Promise.all([
     getAllGear({ query: { limit: "100" } }).catch(() => ({
@@ -55,17 +52,14 @@ const AboutPage = async () => {
   const totalGears = gearRes?.meta?.total ?? gears.length;
   const categories = Array.isArray(categoriesRes?.data) ? categoriesRes.data : [];
 
-  // Real stats derived from live data
   const providerIds = new Set(
     gears.map((g) => g.provider?.id).filter((id): id is string => Boolean(id)),
   );
   const providerCount = providerIds.size;
   const availableNow = gears.filter((g) => g.available && (g.stock ?? 0) > 0).length;
 
-  // Featured gears (with valid images) for the showcase
   const featuredGears = gears.filter((g) => isValidImageUrl(g.image)).slice(0, 4);
 
-  // Categories with live gear counts
   const categoriesWithCounts = categories
     .map((cat) => ({
       ...cat,
@@ -77,28 +71,28 @@ const AboutPage = async () => {
   const stats = [
     {
       icon: Package,
-      label: "Gears in Marketplace",
+      label: "Gears",
       value: totalGears.toLocaleString(),
       suffix: "+",
       color: "bg-blue-50 text-blue-600",
     },
     {
       icon: Store,
-      label: "Active Providers",
+      label: "Providers",
       value: providerCount.toLocaleString(),
       suffix: "+",
       color: "bg-purple-50 text-purple-600",
     },
     {
       icon: Layers,
-      label: "Equipment Categories",
+      label: "Categories",
       value: categories.length.toLocaleString(),
       suffix: "+",
       color: "bg-amber-50 text-amber-600",
     },
     {
       icon: CheckCircle2,
-      label: "Available Right Now",
+      label: "Available",
       value: availableNow.toLocaleString(),
       suffix: "",
       color: "bg-emerald-50 text-emerald-600",
@@ -222,31 +216,31 @@ const AboutPage = async () => {
               </div>
             </div>
 
-            {/* Right: live stats panel */}
-            <div className="relative">
-              <div className="rounded-3xl bg-white/5 backdrop-blur border border-white/10 p-4 sm:p-8 shadow-2xl">
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {/* Right: live stats panel (Fixed overflow & padding for mobile) */}
+            <div className="relative w-full">
+              <div className="rounded-3xl bg-white/5 backdrop-blur border border-white/10 p-3 sm:p-8 shadow-2xl">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
                   {stats.map((stat) => (
                     <div
                       key={stat.label}
                       className="rounded-2xl bg-white/5 border border-white/10 p-3 sm:p-5 text-center hover:bg-white/10 transition-colors"
                     >
                       <div
-                        className={`mx-auto h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center ${stat.color}`}
+                        className={`mx-auto h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center ${stat.color}`}
                       >
                         <stat.icon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <p className="mt-2 sm:mt-3 text-lg sm:text-2xl font-black text-white">
+                      <p className="mt-2 text-base sm:text-2xl font-black text-white">
                         {stat.value}
                         <span className="text-emerald-400">{stat.suffix}</span>
                       </p>
-                      <p className="mt-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      <p className="mt-0.5 text-[10px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">
                         {stat.label}
                       </p>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 to-blue-500/15 border border-emerald-400/20 p-3 sm:p-4 flex items-center gap-3">
+                <div className="mt-3 sm:mt-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 to-blue-500/15 border border-emerald-400/20 p-3 sm:p-4 flex items-center gap-3">
                   <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-300 shrink-0" />
                   <p className="text-[11px] sm:text-xs text-slate-200 font-medium">
                     Live numbers — updated straight from the marketplace.
@@ -326,7 +320,7 @@ const AboutPage = async () => {
         </div>
       </section>
 
-      {/* ─── CATEGORIES (dynamic: 2 items per row on mobile) ─── */}
+      {/* ─── CATEGORIES (Grid 2 on mobile) ─── */}
       {categoriesWithCounts.length > 0 && (
         <section className="bg-slate-50/70 border-y border-slate-100">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
@@ -344,18 +338,17 @@ const AboutPage = async () => {
               </Link>
             </div>
 
-            {/* Mobile-এ grid-cols-2 দেওয়া হয়েছে যাতে ফোনে ২টি করে কার্ড দেখায় */}
             <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
               {categoriesWithCounts.map((cat, i) => (
                 <Link
                   key={cat.id}
                   href={`/gear?categoryId=${cat.id}`}
-                  className="group relative bg-white rounded-2xl sm:rounded-3xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-lg transition-all p-4 sm:p-6"
+                  className="group relative bg-white rounded-2xl sm:rounded-3xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-lg transition-all p-3.5 sm:p-6"
                 >
                   <div className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${categoryGradients[i % categoryGradients.length]}`} />
                   <div className="flex items-center justify-between">
-                    <div className={`h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}>
-                      <Package className="h-5 w-5 sm:h-6 sm:w-6" />
+                    <div className={`h-9 w-9 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}>
+                      <Package className="h-4 w-4 sm:h-6 sm:w-6" />
                     </div>
                     <span className="text-[10px] sm:text-xs font-extrabold text-slate-900 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-full">
                       {cat.count}
@@ -371,7 +364,7 @@ const AboutPage = async () => {
         </section>
       )}
 
-      {/* ─── FEATURED GEARS (dynamic: 2 items per row on mobile) ─── */}
+      {/* ─── FEATURED GEARS (Grid 2 on mobile) ─── */}
       {featuredGears.length > 0 && (
         <section className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
@@ -388,7 +381,6 @@ const AboutPage = async () => {
             </Link>
           </div>
 
-          {/* Mobile-এ grid-cols-2 দেওয়া হয়েছে যাতে ফোনে ২টি করে গিয়ার আইটেম দেখায় */}
           <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
             {featuredGears.map((gear) => (
               <Link
