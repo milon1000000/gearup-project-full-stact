@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
  * Rejects malformed values like "https://jpg/" (no real hostname),
  * empty strings, and non-string values.
  */
-export function isValidImageUrl(url?: string | null): boolean {
+export function isValidImageUrl(url?: string | null): url is string {
   if (!url || typeof url !== "string") return false;
   try {
     const parsed = new URL(url);
