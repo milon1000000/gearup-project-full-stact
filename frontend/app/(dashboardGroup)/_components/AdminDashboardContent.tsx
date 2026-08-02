@@ -160,30 +160,30 @@ const AdminDashboardContent = ({ user, gears, rentals, users, reviews }: AdminPr
   );
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-10 space-y-8">
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-purple-600/30 shrink-0">
-            {user?.name ? user.name.charAt(0).toUpperCase() : <ShieldCheck className="h-8 w-8" />}
+    <div className="container mx-auto max-w-7xl px-4 py-6 sm:py-10 space-y-6 sm:space-y-8 overflow-hidden">
+      {/* Welcome Banner - Fixed mobile overflow issue */}
+      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-5 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-xl relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-xl sm:text-2xl font-bold shadow-md shadow-purple-600/30 shrink-0">
+            {user?.name ? user.name.charAt(0).toUpperCase() : <ShieldCheck className="h-7 w-7 sm:h-8 sm:w-8" />}
           </div>
-          <div className="space-y-1 text-center sm:text-left">
-            <p className="text-xs font-semibold uppercase tracking-widest text-purple-400">
+          <div className="space-y-1 text-left w-full min-w-0">
+            <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-purple-400">
               Admin Control Center
             </p>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h1 className="text-xl sm:text-3xl font-extrabold text-white truncate">
               {user?.name || "Administrator"} 🛡️
             </h1>
-            <p className="text-sm text-slate-400 flex items-center justify-center sm:justify-start gap-1.5">
-              <Mail className="h-3.5 w-3.5 text-purple-400" />
-              {user?.email || "admin@gearup.com"}
+            <p className="text-xs sm:text-sm text-slate-400 flex items-center gap-1.5 truncate">
+              <Mail className="h-3.5 w-3.5 text-purple-400 shrink-0" />
+              <span className="truncate">{user?.email || "admin@gearup.com"}</span>
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2.5 rounded-2xl">
+        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl sm:rounded-2xl shrink-0 self-start md:self-auto">
           <ShieldCheck className="h-4 w-4 text-purple-400" />
-          <span className="text-xs font-bold uppercase tracking-wider text-white">
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white">
             Role: {user?.role || "ADMIN"}
           </span>
         </div>
@@ -219,20 +219,22 @@ const AdminDashboardContent = ({ user, gears, rentals, users, reviews }: AdminPr
 
       {/* Tabs Section for Managing Features */}
       <Tabs defaultValue="gears" className="space-y-6">
-        <TabsList className="bg-slate-100 p-1 rounded-2xl flex-wrap">
-          <TabsTrigger value="gears" className="rounded-xl text-xs font-semibold px-4 py-2">
-            Manage Gears ({gears.length})
-          </TabsTrigger>
-          <TabsTrigger value="rentals" className="rounded-xl text-xs font-semibold px-4 py-2">
-            Rental Orders ({rentals.length})
-          </TabsTrigger>
-          <TabsTrigger value="reviews" className="rounded-xl text-xs font-semibold px-4 py-2">
-            Manage Reviews ({reviews.length})
-          </TabsTrigger>
-          <TabsTrigger value="users" className="rounded-xl text-xs font-semibold px-4 py-2">
-            User Roles ({users.length})
-          </TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-2 scrollbar-none">
+          <TabsList className="bg-slate-100 p-1 rounded-2xl inline-flex w-auto min-w-full sm:min-w-0">
+            <TabsTrigger value="gears" className="rounded-xl text-xs font-semibold px-4 py-2 whitespace-nowrap">
+              Manage Gears ({gears.length})
+            </TabsTrigger>
+            <TabsTrigger value="rentals" className="rounded-xl text-xs font-semibold px-4 py-2 whitespace-nowrap">
+              Rental Orders ({rentals.length})
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="rounded-xl text-xs font-semibold px-4 py-2 whitespace-nowrap">
+              Manage Reviews ({reviews.length})
+            </TabsTrigger>
+            <TabsTrigger value="users" className="rounded-xl text-xs font-semibold px-4 py-2 whitespace-nowrap">
+              User Roles ({users.length})
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* 1. Manage Gears Tab */}
         <TabsContent value="gears" className="space-y-4">
@@ -252,7 +254,7 @@ const AdminDashboardContent = ({ user, gears, rentals, users, reviews }: AdminPr
                 </p>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/50 text-xs font-bold text-slate-500 uppercase tracking-wider">
                       <th className="py-4 px-6">Gear Item</th>
@@ -352,9 +354,9 @@ const AdminDashboardContent = ({ user, gears, rentals, users, reviews }: AdminPr
                 {reviews.map((review) => (
                   <div
                     key={review.id}
-                    className="p-5 flex items-start justify-between gap-4 hover:bg-slate-50/60 transition-colors"
+                    className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-50/60 transition-colors"
                   >
-                    <div className="space-y-1.5 min-w-0">
+                    <div className="space-y-1.5 min-w-0 w-full sm:w-auto">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-900">
                           {review.customer?.name || "Customer"}
@@ -372,7 +374,7 @@ const AdminDashboardContent = ({ user, gears, rentals, users, reviews }: AdminPr
                           ))}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-600 leading-relaxed">
+                      <p className="text-sm text-slate-600 leading-relaxed break-words">
                         &quot;{review.comment || "No comment provided."}&quot;
                       </p>
                       <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-fit">
@@ -382,7 +384,7 @@ const AdminDashboardContent = ({ user, gears, rentals, users, reviews }: AdminPr
                     <button
                       onClick={() => handleDeleteReview(review.id)}
                       disabled={deletingId === review.id}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 px-3 py-2 text-xs font-semibold transition-colors shrink-0 disabled:opacity-60 cursor-pointer"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 px-3 py-2 text-xs font-semibold transition-colors shrink-0 disabled:opacity-60 cursor-pointer w-full sm:w-auto"
                     >
                       {deletingId === review.id ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -414,15 +416,15 @@ const AdminDashboardContent = ({ user, gears, rentals, users, reviews }: AdminPr
       </Tabs>
 
       {/* Platform health strip */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="h-11 w-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+          <div className="flex items-center gap-3 w-full">
+            <div className="h-11 w-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
               <Activity className="h-5 w-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h3 className="text-sm font-bold text-slate-900">Platform Overview</h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 truncate">
                 {gears.length} gears · {rentals.length} rentals · {users.length} users ·{" "}
                 {stats.activeRentals} active rentals right now
               </p>
