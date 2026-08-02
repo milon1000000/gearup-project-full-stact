@@ -27,6 +27,8 @@ import { getAllGear } from "../_actions/getAllGear";
 import { getAllCategories } from "../_actions/getAllCategories";
 import { isValidImageUrl } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 const categoryColors = [
   "bg-blue-50 text-blue-600",
   "bg-purple-50 text-purple-600",

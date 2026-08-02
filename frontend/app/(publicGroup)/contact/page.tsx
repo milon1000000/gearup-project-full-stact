@@ -23,6 +23,8 @@ import {
 import { getAllGear } from "../_actions/getAllGear";
 import { getAllCategories } from "../_actions/getAllCategories";
 
+export const dynamic = "force-dynamic";
+
 const contactInfo = [
   {
     icon: MapPin,
